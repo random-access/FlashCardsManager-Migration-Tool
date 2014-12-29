@@ -1,32 +1,32 @@
 ----------------------------------------------------------------
-Mon Dec 29 13:39:58 CET 2014:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014a-960f-6313-000000adc120 
-on database directory C:\Users\IT-Helpline16\Desktop\TestDB with class loader sun.misc.Launcher$AppClassLoader@1d16e93 
-Loaded from file:/C:/Users/IT-Helpline16/Java/DatabaseTransferTool/lib/derby.jar
+Mon Dec 29 18:21:39 CET 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014a-9711-4434-0000016849a8 
+on database directory /home/moni/Desktop/TestDB with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Loaded from file:/home/moni/git/FlashCardsManager-Migration-Tool/DatabaseTransferTool/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_25-b18
-user.dir=C:\Users\IT-Helpline16\Java\DatabaseTransferTool
-os.name=Windows 8.1
-os.arch=x86
-os.version=6.3
+user.dir=/home/moni/git/FlashCardsManager-Migration-Tool/DatabaseTransferTool
+os.name=Linux
+os.arch=amd64
+os.version=3.17.6-1-ARCH
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Mon Dec 29 13:40:03 CET 2014:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance 13a100c9-014a-960f-6313-000000adc120 
-on database directory C:\Users\IT-Helpline16\Desktop\database_1 with class loader sun.misc.Launcher$AppClassLoader@1d16e93 
-Loaded from file:/C:/Users/IT-Helpline16/Java/DatabaseTransferTool/lib/derby.jar
+Mon Dec 29 18:21:45 CET 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance f55fc0a6-014a-9711-4434-0000016849a8 
+on database directory /home/moni/Desktop/database_1 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Loaded from file:/home/moni/git/FlashCardsManager-Migration-Tool/DatabaseTransferTool/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_25-b18
-user.dir=C:\Users\IT-Helpline16\Java\DatabaseTransferTool
-os.name=Windows 8.1
-os.arch=x86
-os.version=6.3
+user.dir=/home/moni/git/FlashCardsManager-Migration-Tool/DatabaseTransferTool
+os.name=Linux
+os.arch=amd64
+os.version=3.17.6-1-ARCH
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Mon Dec 29 13:40:04 CET 2014:
-Shutting down instance 13a100c9-014a-960f-6313-000000adc120 on database directory C:\Users\IT-Helpline16\Desktop\database_1 with class loader sun.misc.Launcher$AppClassLoader@1d16e93 
+Mon Dec 29 18:21:55 CET 2014:
+Shutting down instance f55fc0a6-014a-9711-4434-0000016849a8 on database directory /home/moni/Desktop/database_1 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
 ----------------------------------------------------------------
-Mon Dec 29 13:40:05 CET 2014:
-Shutting down instance a816c00e-014a-960f-6313-000000adc120 on database directory C:\Users\IT-Helpline16\Desktop\TestDB with class loader sun.misc.Launcher$AppClassLoader@1d16e93 
+Mon Dec 29 18:21:56 CET 2014:
+Shutting down instance a816c00e-014a-9711-4434-0000016849a8 on database directory /home/moni/Desktop/TestDB with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
