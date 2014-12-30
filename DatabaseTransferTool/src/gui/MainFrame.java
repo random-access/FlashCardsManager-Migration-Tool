@@ -12,7 +12,7 @@ public class MainFrame extends JFrame implements IView {
 	private JPanel pnlControls, pnlCenter;
 	
 	public MainFrame (JButton startButton) {
-		setTitle("JComponent Testklasse");
+		setTitle("Database Transfer Tool");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

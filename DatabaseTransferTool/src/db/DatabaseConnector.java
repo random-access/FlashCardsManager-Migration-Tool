@@ -82,7 +82,7 @@ public class DatabaseConnector {
 				+ "CARD_ID_FK INT CONSTRAINT CARD_ID_FK_MM REFERENCES FLASHCARDS(CARD_ID_PK), OLD_CARD_ID INT NOT NULL, UNIQUE(PROJ_ID_FK, CARD_ID_FK))");
 		conn.commit();
 		ctl.setStatus("--- Hilfstabelle erstellt ... \n");
-		st.execute("CREATE TABLE MEDIA (MEDIA_ID INT PRIMARY KEY, CARD_ID_FK INT CONSTRAINT CARD_ID_FK_ME REFERENCES FLASHCARDS(CARD_ID_PK), PATH_TO_MEDIA VARCHAR(100) NOT NULL, PICTYPE CHAR NOT NULL)");
+		st.execute("CREATE TABLE MEDIA (MEDIA_ID_PK INT PRIMARY KEY, CARD_ID_FK INT CONSTRAINT CARD_ID_FK_ME REFERENCES FLASHCARDS(CARD_ID_PK), PATH_TO_MEDIA VARCHAR(100) NOT NULL, PICTYPE CHAR NOT NULL)");
 		conn.commit();
 		ctl.setStatus("--- Medientabelle erstellt ... \n");
 		st.close();
@@ -207,7 +207,7 @@ public class DatabaseConnector {
 	}
 
 	private void saveMediaInDatabase(int nextMediaId, int cardId, String pathName, char qa, Statement st) throws SQLException {
-		st.execute("INSERT INTO MEDIA (MEDIA_ID, CARD_ID_FK, PATH_TO_MEDIA, PICTYPE) "
+		st.execute("INSERT INTO MEDIA (MEDIA_ID_PK, CARD_ID_FK, PATH_TO_MEDIA, PICTYPE) "
 				+ "VALUES (" + nextMediaId + ", " + cardId + ",'" + pathName + "','" + qa + "')");
 		conn.commit();
 	}
