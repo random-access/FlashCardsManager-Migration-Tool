@@ -1,33 +1,23 @@
 package core;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import gui.MainFrame;
 
-import db.DatabaseConnector;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 
 public class StartApp {
-   public static void main(String[] args) {
-      try {
-         DatabaseConnector targetDbex = new DatabaseConnector("/home/moni/Desktop/TestDB");
-         targetDbex.connect();
-         DatabaseConnector srcDbex = new DatabaseConnector("/home/moni/Desktop/database_1");
-         srcDbex.connect();
-         
-         targetDbex.createDBv2Tables();
-         targetDbex.transferProjectsTable(srcDbex);
-         targetDbex.transferFlashcards(srcDbex);
-         targetDbex.blobToPng(srcDbex, "/home/moni/Desktop/TestDB-medias");
-         srcDbex.disconnect();
-         targetDbex.disconnect();
-      } catch (ClassNotFoundException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      } catch (SQLException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	public static void main(String[] args) {
+		JButton startButton = new JButton("Transfer starten");
+		MainFrame frame = new MainFrame(startButton);
+		TransferController ctl = new TransferController(frame);
+		startButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ctl.start();
+				startButton.setEnabled(false);
+			}
+		});
    }
 }

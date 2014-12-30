@@ -5,6 +5,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import utils.FileUtils;
+import core.TransferController;
+
 public class DatabaseConnector {
 
 	private final String driver = "org.apache.derby.jdbc.EmbeddedDriver"; // db-driver
@@ -12,8 +15,11 @@ public class DatabaseConnector {
 	private final String dbLocation; // database location
 
 	private Connection conn; // connection
+	
+	private TransferController ctl;
 
-	public DatabaseConnector(String dbLocation) throws ClassNotFoundException {
+	public DatabaseConnector(String dbLocation, TransferController ctl) throws ClassNotFoundException {
+		this.ctl = ctl;
 		this.dbLocation = dbLocation;
 		Class.forName(driver); // check if driver is reachable
 	}
@@ -22,7 +28,7 @@ public class DatabaseConnector {
 		conn = DriverManager.getConnection(protocol + dbLocation + ";create=true");
 		conn.setAutoCommit(false);
 		if (conn != null) {
-			System.out.println("Successfully created Connection to: " + dbLocation);
+			ctl.setStatus("Verbindung erfolgreich hergestellt zu: " + dbLocation + "\n");
 		}
 	}
 
@@ -39,9 +45,9 @@ public class DatabaseConnector {
 				}
 			}
 			if (!gotSQLExc) {
-				System.out.println("Database at " + dbLocation + " shut down with errors");
+				ctl.setStatus("Beim Herunterfahren der Datenbank in " + dbLocation + " traten Fehler auf"+ "\n");
 			} else {
-				System.out.println("Database at " + dbLocation + " shut down normally");
+				ctl.setStatus("Datenbank in " + dbLocation + " wurde heruntergefahren ..."+ "\n");
 			}
 			System.gc();
 		} catch (SQLException e) {
@@ -51,34 +57,40 @@ public class DatabaseConnector {
 	}
 
 	public void createDBv2Tables() throws SQLException {
-		System.out.print("Creating tables......");
+		ctl.setStatus("Tabellen werden erstellt ...\n");
 		Statement st = conn.createStatement();
 		st.execute("CREATE TABLE PROJECTS (PROJ_ID_PK INT PRIMARY KEY, " + "PROJ_TITLE VARCHAR (100) NOT NULL, "
 				+ "NO_OF_STACKS INT NOT NULL)");
 		conn.commit();
+		ctl.setStatus("--- Projekttabelle erstellt ...\n");
 		st.execute("CREATE TABLE FLASHCARDS (CARD_ID_PK INT PRIMARY KEY, "
 				+ "PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_FL REFERENCES PROJECTS(PROJ_ID_PK), " + "STACK INT NOT NULL,"
 				+ "QUESTION VARCHAR (32672), " + "ANSWER VARCHAR(32672), " + "CUSTOM_WIDTH_Q INT, " + "CUSTOM_WIDTH_A INT)");
 		conn.commit();
+		ctl.setStatus("--- Lernkartentabelle erstellt ...\n");
 		st.execute("CREATE TABLE LABELS (LABEL_ID_PK INT PRIMARY KEY, "
-				+ "PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_LA REFERENCES PROJECTS(PROJ_ID_PK), " + "LABEL_NAME VARCHAR (100))");
+				+ "PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_LA REFERENCES PROJECTS(PROJ_ID_PK), " + "LABEL_NAME VARCHAR (100) NOT NULL)");
 		conn.commit();
+		ctl.setStatus("--- Label-Tabelle erstellt ... \n");
 		st.execute("CREATE TABLE LABELS_FLASHCARDS (LABELS_FLASHCARDS_ID_PK INT PRIMARY KEY, "
 				+ "LABEL_ID_FK INT CONSTRAINT LABEL_ID_FK_LF REFERENCES LABELS(LABEL_ID_PK" + "), "
 				+ "CARD_ID_FK INT CONSTRAINT CARD_ID_FK_LF REFERENCES FLASHCARDS(CARD_ID_PK), "
 				+ "UNIQUE(LABEL_ID_FK, CARD_ID_FK))");
 		conn.commit();
+		ctl.setStatus("--- Zuordnungstabelle Label-Lernkarten erstellt ... \n");
 		st.execute("CREATE TABLE MEDIAMAPPING_TMP (PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_MM REFERENCES PROJECTS(PROJ_ID_PK), "
-				+ "CARD_ID_FK INT CONSTRAINT CARD_ID_FK_MM REFERENCES FLASHCARDS(CARD_ID_PK), OLD_CARD_ID INT, UNIQUE(PROJ_ID_FK, CARD_ID_FK))");
+				+ "CARD_ID_FK INT CONSTRAINT CARD_ID_FK_MM REFERENCES FLASHCARDS(CARD_ID_PK), OLD_CARD_ID INT NOT NULL, UNIQUE(PROJ_ID_FK, CARD_ID_FK))");
 		conn.commit();
-		st.execute("CREATE TABLE MEDIAS (MEDIA_ID INT PRIMARY KEY, CARD_ID_FK INT CONSTRAINT CARD_ID_FK_ME REFERENCES FLASHCARDS(CARD_ID_PK), PATH_TO_MEDIA VARCHAR(100))");
+		ctl.setStatus("--- Hilfstabelle erstellt ... \n");
+		st.execute("CREATE TABLE MEDIAS (MEDIA_ID INT PRIMARY KEY, CARD_ID_FK INT CONSTRAINT CARD_ID_FK_ME REFERENCES FLASHCARDS(CARD_ID_PK), PATH_TO_MEDIA VARCHAR(100) NOT NULL)");
 		conn.commit();
+		ctl.setStatus("--- Medientabelle erstellt ... \n");
 		st.close();
-		System.out.println("done!");
+		ctl.setStatus("Fertig ... \n");
 	}
 
 	public void transferProjectsTable(DatabaseConnector source) throws SQLException {
-		System.out.print("Transferring projects......");
+		ctl.setStatus("Projekte werden \u00fcbertragen ... \n");
 		Statement srcSt = source.conn.createStatement();
 		Statement targetSt = conn.createStatement();
 		srcSt.execute("SELECT * FROM PROJECTS");
@@ -88,14 +100,15 @@ public class DatabaseConnector {
 			targetSt.execute("INSERT INTO PROJECTS (PROJ_ID_PK, PROJ_TITLE, NO_OF_STACKS)" + " VALUES (" + srcRes.getInt(1)
 					+ ", '" + srcRes.getString(2) + "', " + srcRes.getInt(3) + ")");
 			conn.commit();
+			ctl.setStatus("--- Projekt " + srcRes.getInt(1) + " \u00fcbertragen ... \n");
 		}
 		srcSt.close();
 		targetSt.close();
-		System.out.println("done!");
+		ctl.setStatus("Fertig mit Projekten. \n");
 	}
 
 	public void transferFlashcards(DatabaseConnector sourceConnector) throws SQLException {
-		System.out.print("Transferring cards......");
+		ctl.setStatus("Lernkarten werden \u00fcbertragen ... \n");
 		Statement srcSt = sourceConnector.conn.createStatement();
 		Statement targetSt = conn.createStatement();
 		ArrayList<Integer> projIds = getProjectIds(sourceConnector, srcSt);
@@ -114,24 +127,17 @@ public class DatabaseConnector {
 				targetSt.execute("INSERT INTO MEDIAMAPPING_TMP (PROJ_ID_FK, CARD_ID_FK, OLD_CARD_ID) VALUES " + "(" + projId
 						+ ", " + nextCardId + ", " + srcResCards.getInt(1) + ")");
 				conn.commit();
+				ctl.setStatus("--- Karte " + nextCardId + " \u00fcbertragen ... \n");
 				nextCardId++;
 			}
 		}
-		System.out.println("done!");
+		ctl.setStatus("Fertig mit Lernkarten. \n");
 	}
 
-	private ArrayList<Integer> getProjectIds(DatabaseConnector sourceConnector, Statement srcSt) throws SQLException {
-		srcSt.execute("SELECT ID FROM PROJECTS");
-		sourceConnector.conn.commit();
-		ResultSet srcRes = srcSt.getResultSet();
-		ArrayList<Integer> projIds = new ArrayList<Integer>();
-		while (srcRes.next()) {
-			projIds.add(srcRes.getInt(1));
-		}
-		return projIds;
-	}
-
-	public void blobToPng(DatabaseConnector sourceConnector, String pathToMediaFolder) throws SQLException, IOException {
+	public void transferPics(DatabaseConnector sourceConnector, String pathToMediaFolder) throws SQLException, IOException {
+		ctl.setStatus("Bilder werden \u00fcbertragen ... \n");
+		FileUtils.createDirectory(pathToMediaFolder);
+		ctl.setStatus("Medienverzeichnis in " + pathToMediaFolder + " erstellt ...\n");
 		Statement srcSt = sourceConnector.conn.createStatement();
 		Statement targetSt = conn.createStatement();
 		// fetch all project id's:
@@ -149,21 +155,41 @@ public class DatabaseConnector {
 				int newCardId = getMapping(targetSt, nextProjectId, oldCardId);
 				Blob qBlob = res.getBlob(2);
 				Blob aBlob = res.getBlob(3);
-				String qPathName = pathToMediaFolder + "/pic" + nextProjectId + "-" + newCardId + "q.png";
-				String aPathName = pathToMediaFolder + "/pic" + nextProjectId + "-" + newCardId + "a.png";
+				String qPathName = pathToMediaFolder + "/pic-" + nextProjectId + "-" + newCardId + "-q.png";
+				String aPathName = pathToMediaFolder + "/pic-" + nextProjectId + "-" + newCardId + "-a.png";
 				if (qBlob != null) {
 					writeBlobToFile(qBlob, qPathName);
 					saveMediaInDatabase(nextMediaId, newCardId, qPathName, targetSt);
+					ctl.setStatus("--- Bild " + nextMediaId + " \u00fcbertragen ... \n");
 					nextMediaId++;
 				}
 				if (aBlob != null) {
 					writeBlobToFile(aBlob, aPathName);
 					saveMediaInDatabase(nextMediaId, newCardId, aPathName, targetSt);
+					ctl.setStatus("--- Bild " + nextMediaId + " \u00fcbertragen ... \n");
 					nextMediaId++;
 				}
 			}
 		}
+		ctl.setStatus("Fertig mit Bildern. \n");
+	}
+	
+	public void deleteTmpMediaTable() throws SQLException {
+		ctl.setStatus("L\u00f6sche Hilfstabelle ...\n");
+		Statement st = conn.createStatement();
+		st.execute("DROP TABLE MEDIAMAPPING_TMP");
+		ctl.setStatus("Fertig mit Aufr\u00e4umen\n");
+	}
 
+	private ArrayList<Integer> getProjectIds(DatabaseConnector sourceConnector, Statement srcSt) throws SQLException {
+		srcSt.execute("SELECT ID FROM PROJECTS");
+		sourceConnector.conn.commit();
+		ResultSet srcRes = srcSt.getResultSet();
+		ArrayList<Integer> projIds = new ArrayList<Integer>();
+		while (srcRes.next()) {
+			projIds.add(srcRes.getInt(1));
+		}
+		return projIds;
 	}
 
 	private int getMapping(Statement targetSt, int nextProjectId, int oldCardId) throws SQLException {
