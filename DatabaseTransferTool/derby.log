@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Tue Dec 30 12:03:03 CET 2014:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014a-9add-0343-0000015bf9e0 
+Tue Dec 30 12:53:08 CET 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014a-9b0a-dd87-000001567fa0 
 on database directory /home/moni/.Lernkarten/database_2 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
 Loaded from file:/home/moni/git/FlashCardsManager-Migration-Tool/DatabaseTransferTool/lib/derby.jar
 java.vendor=Oracle Corporation
@@ -12,8 +12,8 @@ os.version=3.17.6-1-ARCH
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Tue Dec 30 12:03:10 CET 2014:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance f55fc0a6-014a-9add-0343-0000015bf9e0 
+Tue Dec 30 12:53:15 CET 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance f55fc0a6-014a-9b0a-dd87-000001567fa0 
 on database directory /home/moni/.Lernkarten/database_1 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
 Loaded from file:/home/moni/git/FlashCardsManager-Migration-Tool/DatabaseTransferTool/lib/derby.jar
 java.vendor=Oracle Corporation
@@ -25,8 +25,8 @@ os.version=3.17.6-1-ARCH
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Tue Dec 30 12:03:22 CET 2014:
-Shutting down instance f55fc0a6-014a-9add-0343-0000015bf9e0 on database directory /home/moni/.Lernkarten/database_1 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Tue Dec 30 12:53:27 CET 2014:
+Shutting down instance f55fc0a6-014a-9b0a-dd87-000001567fa0 on database directory /home/moni/.Lernkarten/database_1 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
 ----------------------------------------------------------------
-Tue Dec 30 12:03:24 CET 2014:
-Shutting down instance a816c00e-014a-9add-0343-0000015bf9e0 on database directory /home/moni/.Lernkarten/database_2 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Tue Dec 30 12:53:28 CET 2014:
+Shutting down instance a816c00e-014a-9b0a-dd87-000001567fa0 on database directory /home/moni/.Lernkarten/database_2 with class loader sun.misc.Launcher$AppClassLoader@73d16e93 

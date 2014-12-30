@@ -4,6 +4,7 @@ import gui.IView;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 
@@ -11,10 +12,10 @@ import utils.FileUtils;
 import db.DatabaseConnector;
 
 public class TransferController extends Thread {
-	private static final String APP_FOLDER = FileUtils.appDirectory("Lernkarten");
-	private static final String DATABASEv1_FOLDER = APP_FOLDER + "/database_1";
-	private static final String DATABASEv2_FOLDER = APP_FOLDER + "/database_2";
-	private static final String MEDIA_FOLDER = APP_FOLDER + "/medias";
+	private final String APP_FOLDER = FileUtils.appDirectory("Lernkarten", this);
+	private final String DATABASEv1_FOLDER = APP_FOLDER + "/database_1";
+	private final String DATABASEv2_FOLDER = APP_FOLDER + "/database_2";
+	private final String MEDIA_FOLDER = APP_FOLDER + "/medias";
 	private IView view;
 
 	public TransferController(IView view) {
@@ -25,6 +26,8 @@ public class TransferController extends Thread {
 	public void run() {
 		try {
 			setStatus("Datenbanktransfer wird vorbereitet ...\n");
+			Properties p = System.getProperties();
+			p.setProperty("derby.system.home", APP_FOLDER);
 			DatabaseConnector targetDbex = new DatabaseConnector(DATABASEv2_FOLDER, this);
 			targetDbex.connect();
 			DatabaseConnector srcDbex = new DatabaseConnector(DATABASEv1_FOLDER, this);
