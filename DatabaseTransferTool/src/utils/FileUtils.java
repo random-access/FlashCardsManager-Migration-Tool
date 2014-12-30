@@ -4,6 +4,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -55,24 +56,24 @@ public class FileUtils {
 		}
 	}
 
-	public static String appDirectory(String name, TransferController ctl) {
+	public static String appDirectory(String name, TransferController ctl){
 		String OS = System.getProperty("os.name").toUpperCase();
 		// Windows:
 		if (OS.contains("WIN")) {
-			ctl.setStatus("Betriebssystem: Windows \nLernkarten-Verzeichnis: " + System.getenv("APPDATA") + "/" + name);
+			ctl.setStatus("Betriebssystem: Windows \nLernkarten-Verzeichnis: " + System.getenv("APPDATA") + "/" + name + "\n");
 			return System.getenv("APPDATA") + "/" + name;
 		}
 		// Mac:
 		else if (OS.contains("MAC")) {
-			ctl.setStatus("Betriebssystem: Mac \nLernkarten-Verzeichnis: " + System.getProperty("user.home") + "/Library" + "/" + name);
+			ctl.setStatus("Betriebssystem: Mac \nLernkarten-Verzeichnis: " + System.getProperty("user.home") + "/Library" + "/" + name + "\n");
 			return System.getProperty("user.home") + "/Library" + "/" + name;
 		}
 		// Linux:
 		else if (OS.contains("NUX")) {
-			ctl.setStatus("Betriebssystem: Linux \nLernkarten-Verzeichnis: " + System.getProperty("user.home") + "/." + name);
+			ctl.setStatus("Betriebssystem: Linux \nLernkarten-Verzeichnis: " + System.getProperty("user.home") + "/." + name + "\n");
 			return System.getProperty("user.home") + "/." + name;
 		} else {
-			ctl.setStatus("Betriebssystem: unbekannt \nLernkarten-Verzeichnis: " + System.getProperty("user.dir") + "/." + name);
+			ctl.setStatus("Betriebssystem: unbekannt \nLernkarten-Verzeichnis: " + System.getProperty("user.dir") + "/." + name + "\n");
 			return System.getProperty("user.dir") + "/." + name;
 		}
 	}

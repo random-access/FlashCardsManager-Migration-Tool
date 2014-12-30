@@ -3,6 +3,7 @@ package core;
 import gui.IView;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -12,14 +13,18 @@ import utils.FileUtils;
 import db.DatabaseConnector;
 
 public class TransferController extends Thread {
-	private final String APP_FOLDER = FileUtils.appDirectory("Lernkarten", this);
-	private final String DATABASEv1_FOLDER = APP_FOLDER + "/database_1";
-	private final String DATABASEv2_FOLDER = APP_FOLDER + "/database_2";
-	private final String MEDIA_FOLDER = APP_FOLDER + "/medias";
+	private final String APP_FOLDER;
+	private final String DATABASEv1_FOLDER;
+	private final String DATABASEv2_FOLDER;
+	private final String MEDIA_FOLDER;
 	private IView view;
 
 	public TransferController(IView view) {
 		this.view = view;
+		APP_FOLDER = FileUtils.appDirectory("Lernkarten", this);
+		DATABASEv1_FOLDER = APP_FOLDER + "/database_1";
+		DATABASEv2_FOLDER = APP_FOLDER + "/database_2";
+		MEDIA_FOLDER = APP_FOLDER + "/medias";
 	}
 	
 	@Override
@@ -61,8 +66,9 @@ public class TransferController extends Thread {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				view.updateStatus(message);
-			}
-		});
+		 }
+	 });
 		
 	}
+	
 }
