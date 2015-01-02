@@ -1,12 +1,15 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame implements IView {
+	private JButton btnClose;
 	private JScrollPane scp;
 	private JTextArea txt;
 	private JPanel pnlControls, pnlCenter;
@@ -30,6 +33,15 @@ public class MainFrame extends JFrame implements IView {
 		txt.setBackground(Color.BLACK);
 		txt.setForeground(Color.WHITE);
 		scp = new JScrollPane(txt);
+		btnClose = new JButton("schlie\u00dfen");
+		btnClose.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+				
+			}
+		});
 		add(pnlCenter, BorderLayout.CENTER);
 		pnlCenter.add(scp);
 		add(pnlControls, BorderLayout.SOUTH);
@@ -47,5 +59,14 @@ public class MainFrame extends JFrame implements IView {
 	
 	public void setErrorMessage(String text) {
 		JOptionPane.showMessageDialog(this, text, "Fehler", JOptionPane.ERROR_MESSAGE);
+	}
+
+	@Override
+	public void showSuccessMessage(String text) {
+		JOptionPane.showMessageDialog(this, text, "Fertig", JOptionPane.INFORMATION_MESSAGE);
+		pnlControls.removeAll();
+		pnlControls.add(btnClose);
+		MainFrame.this.revalidate();
+		
 	}
 }

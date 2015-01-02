@@ -24,7 +24,7 @@ public class TransferController extends Thread {
 		APP_FOLDER = FileUtils.appDirectory("Lernkarten", this);
 		DATABASEv1_FOLDER = APP_FOLDER + "/database_1";
 		DATABASEv2_FOLDER = APP_FOLDER + "/database_2";
-		MEDIA_FOLDER = APP_FOLDER + "/medias";
+		MEDIA_FOLDER = APP_FOLDER + "/media";
 	}
 	
 	@Override
@@ -44,6 +44,7 @@ public class TransferController extends Thread {
 			targetDbex.deleteTmpMediaTable();
 			srcDbex.disconnect();
 			targetDbex.disconnect();
+			view.showSuccessMessage("Neue Datenbank wurde erfolgreich erstellt!");
 			// TODO: Datenbank v1 loeschen?
 			setStatus("Datenbanktranfer war erfolgreich!\n");
 		} catch (SQLException e) {

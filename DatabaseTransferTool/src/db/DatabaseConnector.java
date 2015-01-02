@@ -13,6 +13,16 @@ public class DatabaseConnector {
 	private final String driver = "org.apache.derby.jdbc.EmbeddedDriver"; // db-driver
 	private final String protocol = "jdbc:derby:"; // database protocol
 	private final String dbLocation; // database location
+	
+	private final String projectsTable = "PROJECTS";
+	private final String flashcardsTable = "FLASHCARDS";
+	private final String labelsTable = "LABELS";
+	private final String labelsFlashcardsTable = "LABELS_FLASHCARDS";
+	private final String mediaTable = "MEDIA";
+	private final String mediamappingTmpTable = "MEDIAMAPPING_TMP";
+	
+	private final int maxShortString = 1000;
+	private final int maxVarcharLength = 32672;
 
 	private Connection conn; // connection
 	
@@ -59,30 +69,30 @@ public class DatabaseConnector {
 	public void createDBv2Tables() throws SQLException {
 		ctl.setStatus("Tabellen werden erstellt ...\n");
 		Statement st = conn.createStatement();
-		st.execute("CREATE TABLE PROJECTS (PROJ_ID_PK INT PRIMARY KEY, " + "PROJ_TITLE VARCHAR (100) NOT NULL, "
+		st.execute("CREATE TABLE " + projectsTable + " (PROJ_ID_PK INT PRIMARY KEY, " + "PROJ_TITLE VARCHAR (" + maxShortString + ") NOT NULL, "
 				+ "NO_OF_STACKS INT NOT NULL)");
 		conn.commit();
 		ctl.setStatus("--- Projekttabelle erstellt ...\n");
-		st.execute("CREATE TABLE FLASHCARDS (CARD_ID_PK INT PRIMARY KEY, "
+		st.execute("CREATE TABLE " + flashcardsTable + " (CARD_ID_PK INT PRIMARY KEY, "
 				+ "PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_FL REFERENCES PROJECTS(PROJ_ID_PK), " + "STACK INT NOT NULL,"
-				+ "QUESTION VARCHAR (32672), " + "ANSWER VARCHAR(32672), " + "CUSTOM_WIDTH_Q INT, " + "CUSTOM_WIDTH_A INT)");
+				+ "QUESTION VARCHAR (" + maxVarcharLength + "), " + "ANSWER VARCHAR(" + maxVarcharLength + "), " + "CUSTOM_WIDTH_Q INT, " + "CUSTOM_WIDTH_A INT)");
 		conn.commit();
 		ctl.setStatus("--- Lernkartentabelle erstellt ...\n");
-		st.execute("CREATE TABLE LABELS (LABEL_ID_PK INT PRIMARY KEY, "
-				+ "PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_LA REFERENCES PROJECTS(PROJ_ID_PK), " + "LABEL_NAME VARCHAR (100) NOT NULL)");
+		st.execute("CREATE TABLE " + labelsTable + " (LABEL_ID_PK INT PRIMARY KEY, "
+				+ "PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_LA REFERENCES PROJECTS(PROJ_ID_PK), " + "LABEL_NAME VARCHAR (" + maxShortString + ") NOT NULL)");
 		conn.commit();
 		ctl.setStatus("--- Label-Tabelle erstellt ... \n");
-		st.execute("CREATE TABLE LABELS_FLASHCARDS (LABELS_FLASHCARDS_ID_PK INT PRIMARY KEY, "
+		st.execute("CREATE TABLE " + labelsFlashcardsTable + " (LABELS_FLASHCARDS_ID_PK INT PRIMARY KEY, "
 				+ "LABEL_ID_FK INT CONSTRAINT LABEL_ID_FK_LF REFERENCES LABELS(LABEL_ID_PK" + "), "
 				+ "CARD_ID_FK INT CONSTRAINT CARD_ID_FK_LF REFERENCES FLASHCARDS(CARD_ID_PK), "
 				+ "UNIQUE(LABEL_ID_FK, CARD_ID_FK))");
 		conn.commit();
 		ctl.setStatus("--- Zuordnungstabelle Label-Lernkarten erstellt ... \n");
-		st.execute("CREATE TABLE MEDIAMAPPING_TMP (PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_MM REFERENCES PROJECTS(PROJ_ID_PK), "
+		st.execute("CREATE TABLE " + mediamappingTmpTable + " (PROJ_ID_FK INT CONSTRAINT PROJ_ID_FK_MM REFERENCES PROJECTS(PROJ_ID_PK), "
 				+ "CARD_ID_FK INT CONSTRAINT CARD_ID_FK_MM REFERENCES FLASHCARDS(CARD_ID_PK), OLD_CARD_ID INT NOT NULL, UNIQUE(PROJ_ID_FK, CARD_ID_FK))");
 		conn.commit();
 		ctl.setStatus("--- Hilfstabelle erstellt ... \n");
-		st.execute("CREATE TABLE MEDIA (MEDIA_ID_PK INT PRIMARY KEY, CARD_ID_FK INT CONSTRAINT CARD_ID_FK_ME REFERENCES FLASHCARDS(CARD_ID_PK), PATH_TO_MEDIA VARCHAR(100) NOT NULL, PICTYPE CHAR NOT NULL)");
+		st.execute("CREATE TABLE " + mediaTable + " (MEDIA_ID_PK INT PRIMARY KEY, CARD_ID_FK INT CONSTRAINT CARD_ID_FK_ME REFERENCES FLASHCARDS(CARD_ID_PK), PATH_TO_MEDIA VARCHAR(" + maxShortString + ") NOT NULL, PICTYPE CHAR NOT NULL)");
 		conn.commit();
 		ctl.setStatus("--- Medientabelle erstellt ... \n");
 		st.close();
