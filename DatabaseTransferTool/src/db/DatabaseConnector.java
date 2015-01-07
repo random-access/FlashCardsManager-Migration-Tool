@@ -1,6 +1,8 @@
 package db;
 
 import java.io.*;
+import java.net.URLConnection;
+import java.nio.file.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -165,17 +167,17 @@ public class DatabaseConnector {
 				int newCardId = getMapping(targetSt, nextProjectId, oldCardId);
 				Blob qBlob = res.getBlob(2);
 				Blob aBlob = res.getBlob(3);
-				String qPathName = pathToMediaFolder + "/pic-" + nextProjectId + "-" + newCardId + "-q.png";
-				String aPathName = pathToMediaFolder + "/pic-" + nextProjectId + "-" + newCardId + "-a.png";
+				String qPathName = pathToMediaFolder + "/pic-" + nextProjectId + "-" + newCardId + "-q";
+				String aPathName = pathToMediaFolder + "/pic-" + nextProjectId + "-" + newCardId + "-a";
 				if (qBlob != null) {
-					writeBlobToFile(qBlob, qPathName);
-					saveMediaInDatabase(nextMediaId, newCardId, qPathName, 'q', targetSt);
+					String completeQName = writeBlobToFile(qBlob, qPathName);
+					saveMediaInDatabase(nextMediaId, newCardId, completeQName, 'q', targetSt);
 					ctl.setStatus("--- Bild " + nextMediaId + " \u00fcbertragen ... \n");
 					nextMediaId++;
 				}
 				if (aBlob != null) {
-					writeBlobToFile(aBlob, aPathName);
-					saveMediaInDatabase(nextMediaId, newCardId, aPathName, 'a', targetSt);
+					String completeAName = writeBlobToFile(aBlob, aPathName);
+					saveMediaInDatabase(nextMediaId, newCardId, completeAName, 'a', targetSt);
 					ctl.setStatus("--- Bild " + nextMediaId + " \u00fcbertragen ... \n");
 					nextMediaId++;
 				}
@@ -222,13 +224,26 @@ public class DatabaseConnector {
 		conn.commit();
 	}
 
-	private void writeBlobToFile(Blob blob, String pathName) throws FileNotFoundException, SQLException, IOException {
+	private String writeBlobToFile(Blob blob, String pathName) throws FileNotFoundException, SQLException, IOException {
 		File qFile = new File(pathName);
 		OutputStream out = new FileOutputStream(qFile);
 		byte[] buff = blob.getBytes(1, (int) blob.length());
 		out.write(buff);
 		out.close();
 		blob.free();
+		return correctFileExtension(pathName);
+	}
+	
+	public String correctFileExtension(String pathName) throws IOException {
+		Path source = Paths.get(pathName);
+	    String mimeType = Files.probeContentType(source);
+	    String extension = "png";
+	    if (!(mimeType == null)) {
+	    	extension = mimeType.substring(mimeType.indexOf('/')+1, mimeType.length());
+	    }
+	    String correctFileName = pathName + "." + extension;
+	    Files.move(Paths.get(pathName), Paths.get(correctFileName));
+	    return correctFileName;
 	}
 
 }
