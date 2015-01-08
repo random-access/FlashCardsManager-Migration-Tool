@@ -237,7 +237,8 @@ public class DatabaseConnector {
 	public String correctFileExtension(String pathName) throws IOException {
 		Path source = Paths.get(pathName);
 	    String mimeType = Files.probeContentType(source);
-	    String extension = "png";
+	    String extension = "png"; 
+	    // if no mimetype is recognized, use png as we should have some sort of picture here
 	    if (!(mimeType == null)) {
 	    	extension = mimeType.substring(mimeType.indexOf('/')+1, mimeType.length());
 	    }
